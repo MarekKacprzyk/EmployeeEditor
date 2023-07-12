@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EmployeeEditor.Database\EmployeeEditor.Database.csproj" />
-    <ProjectReference Include="..\..\EmployeeEditor.Domain\EmployeeEditor.Domain.csproj" />
+    <ProjectReference Include="..\EmployeeEditor.Database\EmployeeEditor.Database.csproj" />
+    <ProjectReference Include="..\EmployeeEditor.Domain\EmployeeEditor.Domain.csproj" />
   </ItemGroup>
 
 </Project>
