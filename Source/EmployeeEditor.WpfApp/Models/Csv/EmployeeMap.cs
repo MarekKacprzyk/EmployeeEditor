@@ -9,5 +9,8 @@ public class EmployeeMap : ClassMap<EmployeeDto>
     {
         Map(m => m.Id).Name("id");
         Map(m => m.Name).Name("name");
+        Map(m => m.Surename).Name("surename");
+        Map(m => m.Email).Name("email");
+        Map(m => m.PhoneNumber).Name("phone");
     }
 }
