@@ -5,19 +5,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
-             Height="600" 
-             Width="800">
+             mah:DialogParticipation.Register="{Binding}"
+             Height="480" 
+             Width="640">
     <DockPanel LastChildFill="True" Margin="15">
         <Button x:Name="Load"
                 DockPanel.Dock="Bottom"
                 Content="Load"
-                BorderThickness="2"
-                BorderBrush="Blue"
                 Margin="15"/>
         <ListView x:Name="Employees"
                    DockPanel.Dock="Top"
                    Margin="5"
-                   SelectionMode="Single" d:ItemsSource="{d:SampleData ItemCount=5}">
+                   SelectionMode="Single" 
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Center">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}"/>
