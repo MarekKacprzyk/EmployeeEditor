@@ -73,5 +73,11 @@ namespace EmployeeEditor.WpfApp
         {
             _container.InjectProperties(instance);
         }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            _container.Dispose();
+            base.OnExit(sender, e);
+        }
     }
 }
