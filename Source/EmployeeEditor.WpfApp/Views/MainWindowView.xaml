@@ -9,10 +9,15 @@
              Height="480" 
              Width="640">
     <DockPanel LastChildFill="True" Margin="15">
-        <Button x:Name="Load"
-                DockPanel.Dock="Bottom"
-                Content="Load"
-                Margin="15"/>
+        <StackPanel DockPanel.Dock="Right"
+                    VerticalAlignment="Top">
+            <Button x:Name="Load"
+                    Content="Load"
+                    Margin="15"/>
+            <Button x:Name="Edit"
+                    Content="Edit"
+                    Margin="15"/>
+        </StackPanel>
         <ListView x:Name="Employees"
                    DockPanel.Dock="Top"
                    Margin="5"

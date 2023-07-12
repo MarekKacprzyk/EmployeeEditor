@@ -11,12 +11,12 @@ namespace EmployeeEditor.Domain.Dtos
     {
         public int Id { get; init; }
 
-        public string Name { get; init; }
+        public string Name { get; set; }
 
-        public string Surename { get; init; }
+        public string Surename { get; set; }
 
-        public string Email { get; init; }
+        public string Email { get; set; }
 
-        public string PhoneNumber { get; init; }
+        public string PhoneNumber { get; set; }
     }
 }
