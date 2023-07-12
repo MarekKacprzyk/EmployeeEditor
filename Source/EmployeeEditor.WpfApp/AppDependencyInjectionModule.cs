@@ -7,6 +7,7 @@ using EmployeeEditor.Domain;
 using EmployeeEditor.Domain.Interfaces;
 using EmployeeEditor.WpfApp.ViewModels;
 using EmployeeEditor.WpfApp.Views;
+using MahApps.Metro.Controls;
 using Module = Autofac.Module;
 
 namespace EmployeeEditor.WpfApp;
@@ -56,6 +57,7 @@ public class AppDependencyInjectionModule : Module
 
         builder.RegisterTypes(typeof(MainWindowView))
             .AsSelf()
+            .As<MetroWindow>()
             .SingleInstance();
     }
 
