@@ -5,8 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmployeeEditor.WpfApp.Views"
         mc:Ignorable="d"
-        Title="MainWindowView" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        WindowStartupLocation="CenterScreen"
+        Height="600" 
+        Width="800">
+    <DockPanel LastChildFill="True">
+        <Button x:Name="Load"
+                DockPanel.Dock="Bottom"
+                Content="Load"
+                BorderThickness="2"
+                BorderBrush="Blue"
+                Margin="15"/>
+        <ListView x:Name="Employees"
+                   DockPanel.Dock="Top"
+                   Margin="5"/>
+    </DockPanel>
 </Window>
