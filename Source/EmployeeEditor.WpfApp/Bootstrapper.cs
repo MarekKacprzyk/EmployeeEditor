@@ -1,10 +1,9 @@
 ﻿using Autofac;
 using Caliburn.Micro;
+using EmployeeEditor.WpfApp.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
-using EmployeeEditor.WpfApp.ViewModels;
 
 namespace EmployeeEditor.WpfApp
 {
@@ -20,27 +19,7 @@ namespace EmployeeEditor.WpfApp
         protected override void Configure()
         {
             var builder = new ContainerBuilder();
-
-            builder.RegisterType<EventAggregator>()
-                .As<IEventAggregator>()
-                .SingleInstance();
-
-            builder.RegisterType<WindowManager>()
-                .As<IWindowManager>()
-                .SingleInstance();
-
-            // Rejestruj widoki
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                .Where(type => type.Name.EndsWith("View"))
-                .AsSelf();
-
-            // Rejestruj viewmodele
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                .Where(type => type.Name.EndsWith("ViewModel"))
-                .AsSelf()
-                .InstancePerDependency();
-            
-            
+            builder.RegisterModule<AppDependencyInjectionModule>();
             
             _container = builder.Build();
         }

@@ -10,11 +10,13 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="7.0.1" />
     <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\..\EmployeeEditor.Database\EmployeeEditor.Database.csproj" />
+    <ProjectReference Include="..\..\EmployeeEditor.Domain\EmployeeEditor.Domain.csproj" />
   </ItemGroup>
 
 </Project>
