@@ -1,16 +1,13 @@
-﻿using System.Linq;
-using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Caliburn.Micro;
 using EmployeeEditor.Database;
 using EmployeeEditor.Domain;
-using EmployeeEditor.Domain.Dtos;
 using EmployeeEditor.Domain.Interfaces;
-using EmployeeEditor.WpfApp.Models.Validators;
 using EmployeeEditor.WpfApp.ViewModels;
 using EmployeeEditor.WpfApp.Views;
-using FluentValidation;
 using MahApps.Metro.Controls;
+using System.Linq;
+using System.Reflection;
 using IValidator = EmployeeEditor.WpfApp.Models.Validators.IValidator;
 using Module = Autofac.Module;
 

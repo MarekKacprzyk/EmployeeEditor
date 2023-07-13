@@ -8,8 +8,12 @@
              mah:DialogParticipation.Register="{Binding}"
              Height="480" 
              Width="640">
-    <DockPanel LastChildFill="True" Margin="15">
-        <StackPanel DockPanel.Dock="Right"
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1"
                     VerticalAlignment="Top">
             <Button x:Name="Load"
                     Content="Load"
@@ -19,7 +23,7 @@
                     Margin="15"/>
         </StackPanel>
         <ListView x:Name="Employees"
-                   DockPanel.Dock="Top"
+                   Grid.Column="0"
                    Margin="5"
                    SelectionMode="Single" 
                    VerticalAlignment="Stretch"
@@ -35,5 +39,5 @@
             </ListView.View>
 
         </ListView>
-    </DockPanel>
+    </Grid>
 </mah:MetroWindow>

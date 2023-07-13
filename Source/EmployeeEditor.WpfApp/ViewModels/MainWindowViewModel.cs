@@ -70,13 +70,16 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
             if (ofd.ShowDialog() ?? false)
             {
+                var progressBar = await RunProgressBar();
                 try
                 {
-                    var progressBar = await RunProgressBar();
+                    var employees = _csvFileReader.ReadAllEmployee(ofd.FileName);
 
-                    LoadEmployeeFromCsvFile(ofd.FileName);
-
-                    await progressBar.CloseAsync();
+                    Employees.Clear();
+                    foreach (var employee in employees)
+                    {
+                        Employees.Add(employee);
+                    }
                 }
                 catch (IOException e)
                 {
@@ -84,7 +87,11 @@ namespace EmployeeEditor.WpfApp.ViewModels
                 }
                 catch (Exception e)
                 {
-                    await _metroWindow.ShowMessageAsync("Błąd", "Nieznany błąd");
+                    await _metroWindow.ShowMessageAsync("Błąd", e.Message);
+                }
+                finally
+                {
+                    await progressBar.CloseAsync();
                 }
             }
         }
@@ -95,18 +102,11 @@ namespace EmployeeEditor.WpfApp.ViewModels
             controller.SetIndeterminate();
             controller.SetTitle("Ładowanie");
             controller.SetMessage("Ładowanie danych z pliku");
-            return controller;
-        }
-
-        private void LoadEmployeeFromCsvFile(string filePath)
-        {
-            var employees = _csvFileReader.ReadAllEmployee(filePath);
-
-            Employees.Clear();
-            foreach (var employee in employees)
+            controller.Canceled += async (_, __) =>
             {
-                Employees.Add(employee);
-            }
+                await controller.CloseAsync();
+            };
+            return controller;
         }
     }
 }

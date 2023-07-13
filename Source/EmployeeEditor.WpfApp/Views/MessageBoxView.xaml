@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:EmployeeEditor.WpfApp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="120" d:DesignWidth="300">
-    <DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True" 
+               Width="200"
+               Height="150">
             <Button x:Name="Ok"
                     DockPanel.Dock="Bottom"
                     Content="OK"
@@ -15,6 +17,10 @@
                     Margin="15"/>
             <TextBlock x:Name="Message"
                        DockPanel.Dock="Top"
-                       Margin="5"/>
+                       Margin="5"
+                       TextWrapping="Wrap"
+                       Foreground="White"
+                       TextAlignment="Center"
+            />
     </DockPanel>
 </UserControl>

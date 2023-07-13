@@ -35,8 +35,6 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
         <Label Content="Name"
                Grid.Column="0"
@@ -62,5 +60,11 @@
         <TextBox x:Name="Email"
                  Grid.Column="1"
                  Grid.Row="3"/>
+        <Button x:Name="Exit" Grid.Column="0"
+                Content="Save and Exit"
+                Grid.ColumnSpan="2"
+                Grid.Row="4"
+                Margin="15"
+                Height="45"/>
     </Grid>
 </UserControl>
