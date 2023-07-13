@@ -5,7 +5,6 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,7 +16,6 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private readonly CsvFileReader _csvFileReader;
         private readonly IWindowManager _windowManager;
         private readonly MetroWindow _metroWindow;
-        private readonly Func<string, MessageBoxViewModel> _initMessageBox;
         private readonly Func<EmployeeDto, EditEmployeeViewModel> _initEditEmployee;
         private EmployeeDto _selectedEmployee = null!;
 
@@ -25,13 +23,11 @@ namespace EmployeeEditor.WpfApp.ViewModels
             CsvFileReader csvFileReader, 
             IWindowManager windowManager,
             MetroWindow metroWindow,
-            Func<string, MessageBoxViewModel> initMessageBox,
             Func<EmployeeDto, EditEmployeeViewModel> initEditEmployee)
         {
             _csvFileReader = csvFileReader;
             _windowManager = windowManager;
             _metroWindow = metroWindow;
-            _initMessageBox = initMessageBox;
             _initEditEmployee = initEditEmployee;
             Employees = new ObservableCollection<EmployeeDto>();
             DisplayName = "Employee Editor v1.0";
@@ -55,14 +51,15 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         public async Task Edit()
         {
-            var settings = new Dictionary<string, object>()
+            try
             {
-                //d:DesignHeight = "600" d: DesignWidth = "400"
-                { "Width", 60},
-                { "Height", 160}
-            };
-            var edit = _initEditEmployee.Invoke(SelectedEmployee);
-            await _windowManager.ShowWindowAsync(edit);
+                var edit = _initEditEmployee.Invoke(SelectedEmployee);
+                await _windowManager.ShowWindowAsync(edit);
+            }
+            catch (Exception exception)
+            {
+                await _metroWindow.ShowMessageAsync("Error", exception.Message);
+            }
         }
 
         public async Task Load()
@@ -76,11 +73,9 @@ namespace EmployeeEditor.WpfApp.ViewModels
                 try
                 {
                     var progressBar = await RunProgressBar();
-                    //await Task.Delay(100);
 
                     LoadEmployeeFromCsvFile(ofd.FileName);
 
-                    //await Task.Delay(100);
                     await progressBar.CloseAsync();
                 }
                 catch (IOException e)

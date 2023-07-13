@@ -4,9 +4,11 @@ using Autofac;
 using Caliburn.Micro;
 using EmployeeEditor.Database;
 using EmployeeEditor.Domain;
+using EmployeeEditor.Domain.Dtos;
 using EmployeeEditor.Domain.Interfaces;
 using EmployeeEditor.WpfApp.ViewModels;
 using EmployeeEditor.WpfApp.Views;
+using FluentValidation;
 using MahApps.Metro.Controls;
 using Module = Autofac.Module;
 
@@ -39,6 +41,7 @@ public class AppDependencyInjectionModule : Module
         builder.RegisterAssemblyTypes(asemblyTypes)
             .Where(type => type.Name.EndsWith("ViewModel"))
             .Except<MainWindowViewModel>()
+            .Except<EditEmployeeViewModel>()
             .AsSelf()
             .InstancePerDependency();
 
@@ -46,6 +49,23 @@ public class AppDependencyInjectionModule : Module
         builder.RegisterTypes(typeof(MainWindowViewModel))
             .AsSelf()
             .SingleInstance();
+
+        builder.RegisterType<EditEmployeeViewModel>()
+            .AsSelf()
+            .InstancePerDependency();
+
+        builder.RegisterType<EmployeeValidator>()
+            .As<AbstractValidator<EmployeeDto>>()
+            .AsSelf()
+            .InstancePerDependency();
+        //builder.Register((c, p) =>
+        //    {
+        //        var validator = c.Resolve<EmployeeValidator>();
+        //        var employee = p.TypedAs<EmployeeDto>();
+        //        return new EditEmployeeViewModel(employee, validator);
+        //    })
+        //    .AsSelf()
+        //    .InstancePerRequest();
     }
 
     private static void RegisterViews(ContainerBuilder builder, Assembly[] types)
@@ -65,7 +85,6 @@ public class AppDependencyInjectionModule : Module
     {
         builder.RegisterAssemblyTypes(types)
             .Where(type => typeof(IAppService).IsAssignableFrom(type))
-            .Except<MainWindowViewModel>()
             .AsSelf()
             .InstancePerDependency();
     }
