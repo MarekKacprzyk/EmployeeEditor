@@ -1,9 +1,9 @@
 ﻿using EmployeeEditor.Domain.Dtos;
 using FluentValidation;
 
-namespace EmployeeEditor.WpfApp.ViewModels;
+namespace EmployeeEditor.WpfApp.Models.Validators;
 
-public class EmployeeValidator : AbstractValidator<EmployeeDto>
+public class EmployeeValidator : AbstractValidator<EmployeeDto>, IValidator
 {
     public EmployeeValidator()
     {

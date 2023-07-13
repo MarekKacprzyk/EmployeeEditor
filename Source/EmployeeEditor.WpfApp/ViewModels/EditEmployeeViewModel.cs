@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
 using EmployeeEditor.Domain.Dtos;
-using FluentValidation;
+using EmployeeEditor.WpfApp.Models.Validators;
 using System.ComponentModel;
 using System.Linq;
 
@@ -9,9 +9,9 @@ namespace EmployeeEditor.WpfApp.ViewModels
     public sealed class EditEmployeeViewModel : Screen, IDataErrorInfo
     {
         private readonly EmployeeDto _employee;
-        private readonly AbstractValidator<EmployeeDto> _validator;
+        private readonly EmployeeValidator _validator;
 
-        public EditEmployeeViewModel(EmployeeDto employee, AbstractValidator<EmployeeDto> validator)
+        public EditEmployeeViewModel(EmployeeDto employee, EmployeeValidator validator)
         {
             _employee = employee;
             _validator = validator;

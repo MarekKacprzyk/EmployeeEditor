@@ -6,10 +6,12 @@ using EmployeeEditor.Database;
 using EmployeeEditor.Domain;
 using EmployeeEditor.Domain.Dtos;
 using EmployeeEditor.Domain.Interfaces;
+using EmployeeEditor.WpfApp.Models.Validators;
 using EmployeeEditor.WpfApp.ViewModels;
 using EmployeeEditor.WpfApp.Views;
 using FluentValidation;
 using MahApps.Metro.Controls;
+using IValidator = EmployeeEditor.WpfApp.Models.Validators.IValidator;
 using Module = Autofac.Module;
 
 namespace EmployeeEditor.WpfApp;
@@ -34,6 +36,15 @@ public class AppDependencyInjectionModule : Module
         RegisterServices(builder, types);
         RegisterViewModels(builder, types);
         RegisterViews(builder, types);
+        RegisterValidatyors(builder, types);
+    }
+
+    private static void RegisterValidatyors(ContainerBuilder builder, Assembly[] types)
+    {
+        builder.RegisterAssemblyTypes(types)
+            .Where(type => typeof(IValidator).IsAssignableFrom(type))
+            .AsSelf()
+            .InstancePerDependency();
     }
 
     private static void RegisterViewModels(ContainerBuilder builder, Assembly[] asemblyTypes)
@@ -41,31 +52,12 @@ public class AppDependencyInjectionModule : Module
         builder.RegisterAssemblyTypes(asemblyTypes)
             .Where(type => type.Name.EndsWith("ViewModel"))
             .Except<MainWindowViewModel>()
-            .Except<EditEmployeeViewModel>()
             .AsSelf()
             .InstancePerDependency();
-
 
         builder.RegisterTypes(typeof(MainWindowViewModel))
             .AsSelf()
             .SingleInstance();
-
-        builder.RegisterType<EditEmployeeViewModel>()
-            .AsSelf()
-            .InstancePerDependency();
-
-        builder.RegisterType<EmployeeValidator>()
-            .As<AbstractValidator<EmployeeDto>>()
-            .AsSelf()
-            .InstancePerDependency();
-        //builder.Register((c, p) =>
-        //    {
-        //        var validator = c.Resolve<EmployeeValidator>();
-        //        var employee = p.TypedAs<EmployeeDto>();
-        //        return new EditEmployeeViewModel(employee, validator);
-        //    })
-        //    .AsSelf()
-        //    .InstancePerRequest();
     }
 
     private static void RegisterViews(ContainerBuilder builder, Assembly[] types)
