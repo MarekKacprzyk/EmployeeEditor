@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EmployeeEditor.Domain.Entity
+namespace EmployeeEditor.Database.Entity
 {
-    internal record EmployeeEntity
+    public record EmployeeEntity
     {
         [Key]
         public int Id { get; init; }
