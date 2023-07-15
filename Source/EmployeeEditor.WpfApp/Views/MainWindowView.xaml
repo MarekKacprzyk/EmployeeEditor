@@ -21,10 +21,15 @@
             <Button x:Name="Edit"
                     Content="Edit"
                     Margin="15"/>
+            <Button x:Name="Delete"
+                    Content="Delete"
+                    Margin="15"
+                    IsEnabled="{Binding CanEdit}"/>
         </StackPanel>
         <ListView x:Name="Employees"
                    Grid.Column="0"
                    Margin="5"
+                   IsEnabled="{Binding CanSelection}"
                    SelectionMode="Single" 
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Center">

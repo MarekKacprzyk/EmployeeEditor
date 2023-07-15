@@ -8,6 +8,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
@@ -18,6 +19,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private readonly MetroWindow _metroWindow;
         private readonly Func<EmployeeDto, EditEmployeeViewModel> _initEditEmployee;
         private EmployeeDto _selectedEmployee = null!;
+        private bool _canSelection;
 
         public MainWindowViewModel(
             CsvFileReader csvFileReader, 
@@ -31,6 +33,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
             _initEditEmployee = initEditEmployee;
             Employees = new ObservableCollection<EmployeeDto>();
             DisplayName = "Employee Editor v1.0";
+            CanSelection = true;
         }
 
         public ObservableCollection<EmployeeDto> Employees { get; }
@@ -49,12 +52,24 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         public bool CanEdit => SelectedEmployee != null;
 
+        public bool CanSelection
+        {
+            get => _canSelection;
+            set => Set(ref _canSelection, value);
+        }
+
+        public async Task Delete()
+        {
+
+        }
+
         public async Task Edit()
         {
+            CanSelection = false;
             try
             {
                 var edit = _initEditEmployee.Invoke(SelectedEmployee);
-                await _windowManager.ShowWindowAsync(edit);
+                await _windowManager.ShowWindowAsync(edit).ContinueWith(_ => CanSelection = true);
             }
             catch (Exception exception)
             {
@@ -73,13 +88,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
                 var progressBar = await RunProgressBar();
                 try
                 {
-                    var employees = _csvFileReader.ReadAllEmployee(ofd.FileName);
-
-                    Employees.Clear();
-                    foreach (var employee in employees)
-                    {
-                        Employees.Add(employee);
-                    }
+                    await LoadEmployees(ofd.FileName);
                 }
                 catch (IOException e)
                 {
@@ -94,6 +103,23 @@ namespace EmployeeEditor.WpfApp.ViewModels
                     await progressBar.CloseAsync();
                 }
             }
+        }
+
+        private async Task LoadEmployees(string filePath)
+        {
+            await Task.Run(() =>
+            {
+                var employees = _csvFileReader.ReadAllEmployee(filePath);
+
+                Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    Employees.Clear();
+                    foreach (var employee in employees)
+                    {
+                        Employees.Add(employee);
+                    }
+                });
+            });
         }
 
         private async Task<ProgressDialogController> RunProgressBar()
