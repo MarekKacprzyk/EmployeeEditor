@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using EmployeeEditor.Domain.Interfaces;
+using System.Data.Common;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
@@ -65,7 +66,21 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         public async Task Delete()
         {
+            try
+            {
+                var selectedEmployee = SelectedEmployee;
+                var result = await _metroWindow.ShowMessageAsync("Usuń",$"Czy napewno chcesz usunąć użytkownika: {selectedEmployee.Name} {selectedEmployee.Surename}?", MessageDialogStyle.AffirmativeAndNegative);
 
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    Application.Current.Dispatcher.Invoke(() => Employees.Remove(selectedEmployee));
+                    await _employeeRepository.DeleteEmployee(selectedEmployee);
+                }
+            }
+            catch (Exception exception)
+            {
+                await _metroWindow.ShowMessageAsync("Błąd", exception.Message);
+            }
         }
 
         public async Task Edit()
@@ -73,12 +88,14 @@ namespace EmployeeEditor.WpfApp.ViewModels
             CanSelection = false;
             try
             {
-                var edit = _initEditEmployee.Invoke(SelectedEmployee);
+                var selectedEmployee = SelectedEmployee;
+                var edit = _initEditEmployee.Invoke(selectedEmployee);
                 await _windowManager.ShowWindowAsync(edit).ContinueWith(_ => CanSelection = true);
+                await _employeeRepository.UpdateEmployee(selectedEmployee);
             }
             catch (Exception exception)
             {
-                await _metroWindow.ShowMessageAsync("Error", exception.Message);
+                await _metroWindow.ShowMessageAsync("Błąd", exception.Message);
             }
         }
 
