@@ -18,5 +18,7 @@ namespace EmployeeEditor.Domain.Dtos
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
+
+        public List<TagDto> Tags { get; set; } = new List<TagDto>();
     }
 }

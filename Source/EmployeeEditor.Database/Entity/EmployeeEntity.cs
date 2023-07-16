@@ -17,5 +17,7 @@ namespace EmployeeEditor.Database.Entity
         public string Email { get; init; }
         
         public string PhoneNumber { get; init; }
+
+        public virtual List<TagEntity> Tags { get; init; } = new List<TagEntity>();
     }
 }
