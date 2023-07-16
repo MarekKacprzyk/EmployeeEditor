@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
+             WindowStartupLocation="CenterScreen"
              mah:DialogParticipation.Register="{Binding}"
              Height="480" 
              Width="640">

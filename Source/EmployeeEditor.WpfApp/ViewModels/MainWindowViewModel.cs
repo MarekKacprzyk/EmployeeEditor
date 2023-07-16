@@ -7,8 +7,10 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using EmployeeEditor.Domain.Interfaces;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
@@ -17,19 +19,22 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private readonly CsvFileReader _csvFileReader;
         private readonly IWindowManager _windowManager;
         private readonly MetroWindow _metroWindow;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly Func<EmployeeDto, EditEmployeeViewModel> _initEditEmployee;
         private EmployeeDto _selectedEmployee = null!;
         private bool _canSelection;
 
         public MainWindowViewModel(
-            CsvFileReader csvFileReader, 
+            CsvFileReader csvFileReader,
             IWindowManager windowManager,
             MetroWindow metroWindow,
+            IEmployeeRepository employeeRepository,
             Func<EmployeeDto, EditEmployeeViewModel> initEditEmployee)
         {
             _csvFileReader = csvFileReader;
             _windowManager = windowManager;
             _metroWindow = metroWindow;
+            _employeeRepository = employeeRepository;
             _initEditEmployee = initEditEmployee;
             Employees = new ObservableCollection<EmployeeDto>();
             DisplayName = "Employee Editor v1.0";
@@ -107,18 +112,25 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         private async Task LoadEmployees(string filePath)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                var employees = _csvFileReader.ReadAllEmployee(filePath);
-
-                Application.Current.Dispatcher.InvokeAsync(() =>
+                try
                 {
-                    Employees.Clear();
-                    foreach (var employee in employees)
+                    var employees = _csvFileReader.ReadAllEmployee(filePath).ToArray();
+                    await _employeeRepository.SetNewEmployeesCollection(employees);
+                    Application.Current.Dispatcher.InvokeAsync(async () =>
                     {
-                        Employees.Add(employee);
-                    }
-                });
+                        Employees.Clear();
+                        foreach (var employee in employees)
+                        {
+                            Employees.Add(employee);
+                        }
+                    });
+                }
+                catch (Exception exception)
+                {
+                    await _metroWindow.ShowMessageAsync("Błąd", exception.Message);
+                }
             });
         }
 

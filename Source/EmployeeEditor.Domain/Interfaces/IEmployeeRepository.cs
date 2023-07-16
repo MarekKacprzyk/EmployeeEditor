@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EmployeeEditor.Domain.Dtos;
 
 namespace EmployeeEditor.Domain.Interfaces
 {
-    internal interface IEmployeeRepository
+    public interface IEmployeeRepository
     {
+        Task SetNewEmployeesCollection(params EmployeeDto[] employees);
+        Task DeleteEmployee(EmployeeDto employee);
+        Task UpdateEmployee(EmployeeDto employee);
     }
 }
