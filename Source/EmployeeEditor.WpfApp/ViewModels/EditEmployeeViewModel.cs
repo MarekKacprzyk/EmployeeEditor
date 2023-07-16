@@ -1,15 +1,12 @@
-﻿using System;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using EmployeeEditor.Domain.Dtos;
+using EmployeeEditor.Domain.Interfaces;
 using EmployeeEditor.WpfApp.Models.Validators;
+using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using MaterialDesignThemes.Wpf;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
@@ -18,16 +15,19 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private readonly EmployeeDto _employee;
         private readonly EmployeeValidator _validator;
         private readonly IWindowManager _windowManager;
+        private readonly IEmployeeRepository _employeeRepository;
         private readonly Func<string, MessageBoxViewModel> _messageBoxFactory;
 
         public EditEmployeeViewModel(EmployeeDto employee, 
             EmployeeValidator validator, 
             IWindowManager windowManager,
+            IEmployeeRepository employeeRepository,
             Func<string, MessageBoxViewModel> messageBoxFactory)
         {
             _employee = employee;
             _validator = validator;
             _windowManager = windowManager;
+            _employeeRepository = employeeRepository;
             _messageBoxFactory = messageBoxFactory;
             DisplayName = "Edit employee panel";
         }
@@ -92,19 +92,23 @@ namespace EmployeeEditor.WpfApp.ViewModels
             await TryCloseAsync();
         }
 
-        public override async Task TryCloseAsync(bool? dialogResult = null)
+        public override async Task<bool> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var result = await _validator.ValidateAsync(_employee);
+            var result = await _validator.ValidateAsync(_employee, cancellationToken);
 
             var hasAnyError = result.Errors?.Any() ?? false;
-            if (hasAnyError)
+            if (!hasAnyError)
             {
-                var messageBox = _messageBoxFactory.Invoke($"Nieprawidłowe dane:\n\n{result.Errors[0].ErrorMessage}");
-
-                await _windowManager.ShowDialogAsync(messageBox);
-                //_metroWindow.ShowMessageAsync("Error", );
+                //await base.TryCloseAsync(hasAnyError);
+                await _employeeRepository.UpdateEmployee(_employee);
+                return true;
             }
-            await base.TryCloseAsync(hasAnyError);
+
+            var messageBox = _messageBoxFactory.Invoke($"Nieprawidłowe dane:\n\n{result.Errors[0].ErrorMessage}");
+
+            await _windowManager.ShowDialogAsync(messageBox);
+
+            return false;
         }
     }
 }

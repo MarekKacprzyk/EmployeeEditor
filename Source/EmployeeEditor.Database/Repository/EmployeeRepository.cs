@@ -31,7 +31,7 @@ namespace EmployeeEditor.Database.Repository
         public async Task DeleteEmployee(EmployeeDto employee)
         {
             var existingPerson = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == employee.Id);
-            if (existingPerson == null)
+            if (existingPerson is null)
             {
                 throw new EntryPointNotFoundException("Employee not found");
             }
@@ -43,7 +43,7 @@ namespace EmployeeEditor.Database.Repository
         public async Task UpdateEmployee(EmployeeDto employee)
         {
             var existingPerson = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == employee.Id);
-            if (existingPerson == null)
+            if (existingPerson is null)
             {
                 throw new EntryPointNotFoundException("Employee not found");
             }

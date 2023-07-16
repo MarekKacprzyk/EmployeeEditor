@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using EmployeeEditor.Domain.Dtos;
+using EmployeeEditor.Domain.Interfaces;
 using EmployeeEditor.WpfApp.Models.Csv;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -10,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using EmployeeEditor.Domain.Interfaces;
-using System.Data.Common;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
@@ -23,7 +22,6 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private readonly IEmployeeRepository _employeeRepository;
         private readonly Func<EmployeeDto, EditEmployeeViewModel> _initEditEmployee;
         private EmployeeDto _selectedEmployee = null!;
-        private bool _canSelection;
 
         public MainWindowViewModel(
             CsvFileReader csvFileReader,
@@ -39,7 +37,6 @@ namespace EmployeeEditor.WpfApp.ViewModels
             _initEditEmployee = initEditEmployee;
             Employees = new ObservableCollection<EmployeeDto>();
             DisplayName = "Employee Editor v1.0";
-            CanSelection = true;
         }
 
         public ObservableCollection<EmployeeDto> Employees { get; }
@@ -52,16 +49,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
                 if (Equals(value, _selectedEmployee)) return;
                 _selectedEmployee = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(nameof(CanEdit));
             }
-        }
-
-        public bool CanEdit => SelectedEmployee != null;
-
-        public bool CanSelection
-        {
-            get => _canSelection;
-            set => Set(ref _canSelection, value);
         }
 
         public async Task Delete()
@@ -85,13 +73,17 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         public async Task Edit()
         {
-            CanSelection = false;
             try
             {
                 var selectedEmployee = SelectedEmployee;
                 var edit = _initEditEmployee.Invoke(selectedEmployee);
-                await _windowManager.ShowWindowAsync(edit).ContinueWith(_ => CanSelection = true);
-                await _employeeRepository.UpdateEmployee(selectedEmployee);
+                var result = await _windowManager.ShowDialogAsync(edit);
+
+                var employeeIndex = Employees.IndexOf(selectedEmployee);
+                if (employeeIndex < 0) return;
+
+                Employees.RemoveAt(employeeIndex);
+                Employees.Insert(employeeIndex, selectedEmployee);
             }
             catch (Exception exception)
             {
