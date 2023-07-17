@@ -84,6 +84,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
                 Employees.RemoveAt(employeeIndex);
                 Employees.Insert(employeeIndex, selectedEmployee);
+                await _employeeRepository.UpdateEmployee(Employees[employeeIndex]);
             }
             catch (Exception exception)
             {

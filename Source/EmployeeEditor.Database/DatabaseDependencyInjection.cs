@@ -1,11 +1,10 @@
-﻿using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using AutoMapper;
-using EmployeeEditor.Database.Map;
 using EmployeeEditor.Database.Repository;
 using EmployeeEditor.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using System.Reflection;
 using Module = Autofac.Module;
 
 namespace EmployeeEditor.Database

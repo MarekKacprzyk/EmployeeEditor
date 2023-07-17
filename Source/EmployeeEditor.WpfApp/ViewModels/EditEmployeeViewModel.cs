@@ -15,7 +15,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
     public sealed class EditEmployeeViewModel : Screen, IDataErrorInfo
     {
         private readonly EmployeeDto _employee;
-        private readonly EmployeeValidator _validator;
+        private readonly EmployeeValidator _employeeValidator;
         private readonly TagValidator _tagValidator;
         private readonly IWindowManager _windowManager;
         private readonly IEmployeeRepository _employeeRepository;
@@ -25,16 +25,17 @@ namespace EmployeeEditor.WpfApp.ViewModels
         private TagViewModel _selectedTag;
 
         public EditEmployeeViewModel(EmployeeDto employee, 
-            EmployeeValidator validator, 
-            TagValidator tagValidator,
+            EmployeeValidator employeeValidator, 
+            TagValidator tagValidator, 
             IWindowManager windowManager,
             IEmployeeRepository employeeRepository,
             ITagRepository tagRepository,
             Func<TagDto, TagViewModel> tagVmFactory,
+            Func<EmployeeDto, TagEditorViewModel> tagEditorVmFactory,
             Func<string, MessageBoxViewModel> messageBoxFactory)
         {
             _employee = employee;
-            _validator = validator;
+            _employeeValidator = employeeValidator;
             _tagValidator = tagValidator;
             _windowManager = windowManager;
             _employeeRepository = employeeRepository;
@@ -44,7 +45,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
             DisplayName = "Edit employee panel";
             
             Tags = new ObservableCollection<TagViewModel>(employee.Tags.Select(tagVmFactory.Invoke));
-
+            TagsEditor = tagEditorVmFactory.Invoke(employee);
         }
 
         public string Name
@@ -88,6 +89,8 @@ namespace EmployeeEditor.WpfApp.ViewModels
         }
 
         public ObservableCollection<TagViewModel> Tags { get; }
+        
+        public TagEditorViewModel TagsEditor { get; set; }
 
         public TagViewModel SelectedTag
         {
@@ -105,7 +108,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
         {
             get
             {
-                var result = _validator.Validate(_employee);
+                var result = _employeeValidator.Validate(_employee);
                 
                 if (result.IsValid) return null;
 
@@ -148,14 +151,14 @@ namespace EmployeeEditor.WpfApp.ViewModels
             await TryCloseAsync();
         }
 
-        public override async Task<bool> CanCloseAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())
         {
-            var result = await _validator.ValidateAsync(_employee, cancellationToken);
+            var result = await _employeeValidator.ValidateAsync(_employee, cancellationToken);
+            var tagValidationResult= _employee.Tags.Select(p => _tagValidator.Validate(p)).Any(e => e.Errors.Any());
 
             var hasAnyError = result.Errors?.Any() ?? false;
-            if (!hasAnyError)
+            if (!hasAnyError && !tagValidationResult)
             {
-                //await base.TryCloseAsync(hasAnyError);
                 await _employeeRepository.UpdateEmployee(_employee);
                 return true;
             }

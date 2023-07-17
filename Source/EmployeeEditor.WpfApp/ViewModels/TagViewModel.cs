@@ -1,24 +1,18 @@
 ﻿using Caliburn.Micro;
 using EmployeeEditor.Domain.Dtos;
-using EmployeeEditor.WpfApp.Models.Validators;
-using System.ComponentModel;
-using System.Linq;
 
 namespace EmployeeEditor.WpfApp.ViewModels
 {
-    public class TagViewModel : Screen, IDataErrorInfo
+    public class TagViewModel : PropertyChangedBase
     {
-        private readonly TagValidator _validator;
-
-        public TagViewModel(TagDto tag, TagValidator validator)
+        public TagViewModel(TagDto tag)
         {
             Dto = tag;
-            _validator = validator;
         }
 
         public string Name
         {
-            get => Dto.Name;
+            get => Dto?.Name ?? string.Empty;
             set
             {
                 if (value == Dto.Name) return;
@@ -29,7 +23,7 @@ namespace EmployeeEditor.WpfApp.ViewModels
 
         public string Description
         {
-            get => Dto.Name;
+            get => Dto?.Description ?? string.Empty;
             set
             {
                 if (value == Dto.Description) return;
@@ -38,20 +32,6 @@ namespace EmployeeEditor.WpfApp.ViewModels
             }
         }
 
-        public string Error { get; }
-        public TagDto Dto { get; set; }
-
-        public string this[string columnName]
-        {
-            get
-            {
-                var result = _validator.Validate(Dto);
-
-                if (result.IsValid) return null;
-
-                var selectedErro = result.Errors.FirstOrDefault(e => e.PropertyName == columnName);
-                return selectedErro?.ErrorMessage;
-            }
-        }
+        public TagDto Dto { get; }
     }
 }
