@@ -24,6 +24,6 @@ public class EmployeeValidator : AbstractValidator<EmployeeDto>, IValidator
     private static void ValidName(IRuleBuilder<EmployeeDto, string> nameRule)
     {
         nameRule.NotEmpty().WithMessage("Pole jest wymagane.")
-            .MaximumLength(50).WithMessage("Pole musi zawierać maksymalnie 50 znakó");
+            .MaximumLength(50).WithMessage("Pole musi zawierać maksymalnie 50 znaków");
     }
 }

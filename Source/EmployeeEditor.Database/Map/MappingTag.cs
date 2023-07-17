@@ -9,5 +9,6 @@ public class MappingTag : Profile
     public MappingTag()
     {
         CreateMap<TagDto, TagEntity>();
+        CreateMap<TagEntity, TagDto>();
     }
 }

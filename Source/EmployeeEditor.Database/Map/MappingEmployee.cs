@@ -9,6 +9,7 @@ namespace EmployeeEditor.Database.Map
         public MappingEmployee()
         {
             CreateMap<EmployeeDto, EmployeeEntity>();
+            CreateMap<EmployeeEntity, EmployeeDto>();
         }
     }
 }

@@ -27,23 +27,22 @@
                     Margin="15"
                     IsEnabled="{Binding CanEdit}"/>
         </StackPanel>
-        <ListView x:Name="Employees"
-                   Grid.Column="0"
-                   Margin="5"
-                   IsEnabled="{Binding CanSelection}"
-                   SelectionMode="Single" 
-                   VerticalAlignment="Stretch"
-                   HorizontalAlignment="Center">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}"/>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Surename" DisplayMemberBinding="{Binding Surename}"/>
-                    <GridViewColumn Header="PhoneNumber" DisplayMemberBinding="{Binding PhoneNumber}"/>
-                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}"/>
-                </GridView>
-            </ListView.View>
-
-        </ListView>
+        <DataGrid x:Name="Employees"
+                  Grid.Column="0"
+                  Margin="5"
+                  IsEnabled="{Binding CanSelection}"
+                  SelectionMode="Single" 
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Center">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="auto" Header="Id" Binding="{Binding Id}"/>
+                <DataGridTextColumn Width="auto" Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Width="auto" Header="Surename" Binding="{Binding Surename}"/>
+                <DataGridTextColumn Width="auto" Header="PhoneNumber" Binding="{Binding PhoneNumber}"/>
+                <DataGridTextColumn Width="*" Header="Email" Binding="{Binding Email}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </mah:MetroWindow>

@@ -3,7 +3,9 @@ using EmployeeEditor.Domain.Dtos;
 using EmployeeEditor.Domain.Interfaces;
 using EmployeeEditor.WpfApp.Models.Validators;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,22 +16,35 @@ namespace EmployeeEditor.WpfApp.ViewModels
     {
         private readonly EmployeeDto _employee;
         private readonly EmployeeValidator _validator;
+        private readonly TagValidator _tagValidator;
         private readonly IWindowManager _windowManager;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly Func<TagDto, TagViewModel> _tagVmFactory;
         private readonly Func<string, MessageBoxViewModel> _messageBoxFactory;
+        private TagViewModel _selectedTag;
 
         public EditEmployeeViewModel(EmployeeDto employee, 
             EmployeeValidator validator, 
+            TagValidator tagValidator,
             IWindowManager windowManager,
             IEmployeeRepository employeeRepository,
+            ITagRepository tagRepository,
+            Func<TagDto, TagViewModel> tagVmFactory,
             Func<string, MessageBoxViewModel> messageBoxFactory)
         {
             _employee = employee;
             _validator = validator;
+            _tagValidator = tagValidator;
             _windowManager = windowManager;
             _employeeRepository = employeeRepository;
+            _tagRepository = tagRepository;
+            _tagVmFactory = tagVmFactory;
             _messageBoxFactory = messageBoxFactory;
             DisplayName = "Edit employee panel";
+            
+            Tags = new ObservableCollection<TagViewModel>(employee.Tags.Select(tagVmFactory.Invoke));
+
         }
 
         public string Name
@@ -72,6 +87,18 @@ namespace EmployeeEditor.WpfApp.ViewModels
             }
         }
 
+        public ObservableCollection<TagViewModel> Tags { get; }
+
+        public TagViewModel SelectedTag
+        {
+            get => _selectedTag;
+            set
+            {
+                Set(ref _selectedTag, value);
+                NotifyOfPropertyChange(nameof(CanRemoveTag));
+            }
+        }
+
         public string Error { get; set; }
 
         public string this[string columnName]
@@ -85,6 +112,35 @@ namespace EmployeeEditor.WpfApp.ViewModels
                 var selectedErro = result.Errors.FirstOrDefault(e => e.PropertyName == columnName);
                 return selectedErro?.ErrorMessage;
             }
+        }
+
+        public async Task AddTag()
+        {
+            try
+            {
+                var newTag = new TagDto("nowy tag", "opis tagu");
+                var response = await _tagRepository.AddTag(newTag, _employee);
+
+                if (response is null) throw new DataException("Nie udało się dodać nowego tagu");
+                
+                Tags.Add(_tagVmFactory.Invoke(response));
+
+            }
+            catch (Exception exception)
+            {
+                await _windowManager.ShowDialogAsync(exception.Message);
+            }
+        }
+
+        public bool CanRemoveTag => SelectedTag is not null;
+
+        public async Task RemoveTag()
+        {
+            if (SelectedTag is null) return;
+            
+            Tags.Remove(SelectedTag);
+            await _tagRepository.DeleteTag(SelectedTag.Dto, _employee);
+            SelectedTag = null;
         }
 
         public async Task Exit()
